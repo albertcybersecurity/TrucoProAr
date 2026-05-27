@@ -1,167 +1,786 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TrucoPro AR · Plataforma de Truco Argentino</title>
-  <link rel="stylesheet" href="./css/styles.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TrucoPro AR · Demo Pro</title>
+<style>
+:root{
+  --bg:#1e1209;
+  --wood1:#b77a3a;
+  --wood2:#9f6730;
+  --wood3:#7f5128;
+  --dark:#0d1117;
+  --panel:#12151d;
+  --cyan:#25e7b3;
+  --cyan2:#14c78e;
+  --gold:#f7b400;
+  --white:#f7f7f7;
+  --muted:#b6b6b6;
+  --red:#ff667a;
+  --shadow:0 20px 50px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#111;color:#fff;font-family:Arial,Helvetica,sans-serif}
+body{
+  background:
+    linear-gradient(0deg, rgba(0,0,0,.25), rgba(0,0,0,.25)),
+    repeating-linear-gradient(0deg,#3c2613 0 2px,#4b2e16 2px 160px);
+}
+.app{max-width:700px;margin:0 auto;min-height:100vh;background:
+  linear-gradient(0deg, rgba(0,0,0,.18), rgba(0,0,0,.18)),
+  repeating-linear-gradient(0deg,var(--wood1) 0 2px,var(--wood2) 2px 152px);
+  box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 80px rgba(0,0,0,.6);
+  position:relative;overflow:hidden;
+}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:rgba(0,0,0,.18);backdrop-filter:blur(6px);position:sticky;top:0;z-index:20}
+.brand{font-weight:900;letter-spacing:.2px}
+.brand .pro{color:#2ce4ff}
+.brand .ar{color:#f7c64f}
+.top-actions{display:flex;gap:8px}
+.mini-btn{border:none;background:#20170f;color:#fff;border-radius:999px;padding:9px 12px;font-weight:700;box-shadow:var(--shadow)}
+.board{padding:10px 12px 120px;position:relative}
+.opponent-header{display:flex;justify-content:center;position:relative;margin-top:8px}
+.avatar-wrap{display:flex;flex-direction:column;align-items:center}
+.place-badge{
+  position:absolute;left:-10px;top:-8px;background:#f4e5c7;color:#21180e;
+  width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:900;border:3px solid #111;
+}
+.avatar{width:76px;height:76px;border-radius:50%;border:4px solid rgba(255,255,255,.35);background:#ddd center/cover no-repeat;box-shadow:var(--shadow)}
+.user-tag{margin-top:-8px;background:#1a140f;border-radius:999px;padding:8px 14px;font-size:15px;font-weight:900;box-shadow:var(--shadow)}
+.user-tag .check{color:#27e473}
+.score-float{
+  position:relative;z-index:3;
+  width:min(360px,92%);
+  margin:-8px auto 0;
+}
+.score-panel{
+  background:rgba(7,12,20,.95);border-radius:22px;padding:14px 14px 10px;
+  display:grid;grid-template-columns:1fr 1fr 56px;align-items:center;gap:8px;
+  box-shadow:0 18px 40px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.05);
+}
+.score-panel .side{display:grid;justify-items:center}
+.score-panel .label{font-weight:900;font-size:13px;color:#ddd}
+.score-panel .label.red{color:#ff8f9b}
+.score-panel .bigscore{font-size:22px;font-weight:900;display:flex;align-items:center;gap:6px}
+.pips{display:flex;gap:4px}
+.pip{width:12px;height:18px;border:2px solid rgba(255,255,255,.35);border-radius:3px;background:transparent}
+.pip.on{background:#fff;border-color:#fff}
+.to-points{font-size:12px;color:#b7b7b7;text-align:center}
+.turn-pill{
+  margin:10px auto 0;background:#1f7a5d;color:#d7fff2;border:3px solid #29d59d;border-radius:999px;
+  padding:8px 16px;display:inline-block;font-weight:900;font-size:16px;box-shadow:var(--shadow)
+}
+.turn-pill .timer{font-size:19px;color:#fff;margin-left:8px}
+.opponent-cards{display:flex;justify-content:center;gap:12px;margin-top:10px}
+.back-card{
+  width:120px;height:174px;border-radius:14px;transform:rotate(0deg);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,211,84,.18), transparent 35%),
+    repeating-linear-gradient(45deg,#263c6f 0 9px,#1d2f59 9px 18px);
+  border:4px solid #1fc08c;
+  box-shadow:0 18px 35px rgba(0,0,0,.34);
+  position:relative;
+}
+.back-card:before,.back-card:after{
+  content:"☀";position:absolute;color:#f3d554;opacity:.8;font-size:24px;
+}
+.back-card:before{left:10px;bottom:8px}
+.back-card:after{right:10px;top:8px;transform:rotate(180deg)}
+.back-card.left{transform:rotate(-8deg)}
+.back-card.right{transform:rotate(8deg)}
+.manos{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:18px 10px 10px}
+.mano-col .mano-title{text-align:center;color:#e2d1c0;font-weight:900;opacity:.75;font-size:14px;letter-spacing:.6px}
+.slot{
+  margin-top:10px;height:188px;border-radius:16px;border:3px dashed rgba(255,255,255,.25);
+  position:relative;background:rgba(0,0,0,.05)
+}
+.slot.win-player{border-color:#25e7b3;box-shadow:0 0 0 2px rgba(37,231,179,.15) inset}
+.slot.win-cpu{border-color:#ff8f9b;box-shadow:0 0 0 2px rgba(255,143,155,.15) inset}
+.slot .mini-card-wrap{position:absolute;left:50%;transform:translateX(-50%) scale(.48);transform-origin:top center}
+.slot .mini-card-wrap.cpu{top:-26px}
+.slot .mini-card-wrap.player{bottom:-60px}
+.mano-banner{
+  width:max-content;margin:22px auto 12px;background:#efcc8c;color:#37200e;border:3px solid #9a7440;border-radius:999px;
+  padding:8px 20px;font-weight:900;box-shadow:var(--shadow)
+}
+.mano-banner .hand{color:#6b3a10}
+.player-hand{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+.card-btn{background:none;border:none;padding:0;cursor:pointer}
+.card-btn.disabled{cursor:not-allowed;opacity:.75}
+.card-btn.playable:hover .truco-card{transform:translateY(-10px)}
+.truco-card{
+  width:136px;height:196px;background:#fff;border:3px solid #ddd;border-radius:14px;position:relative;box-shadow:0 12px 25px rgba(0,0,0,.24);
+  overflow:hidden;transition:.16s ease;
+}
+.card-inner{position:absolute;inset:8px;border:2px solid #bbb;border-radius:8px}
+.corner{position:absolute;top:5px;left:7px;font-size:22px;font-weight:900;color:#222;line-height:1}
+.corner.br{top:auto;left:auto;right:7px;bottom:5px;transform:rotate(180deg)}
+.suit-icon-small{display:block;width:16px;height:16px}
+.center-art{position:absolute;inset:30px 18px 28px;display:grid;place-items:center}
+.card-name-bottom{
+  position:absolute;left:10px;right:10px;bottom:12px;text-align:center;font-size:9px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.4px
+}
+.panel-actions{
+  position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(700px,100%);
+  background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.45)), #101216;
+  border-top-left-radius:26px;border-top-right-radius:26px;padding:16px 14px 20px;box-shadow:0 -16px 40px rgba(0,0,0,.4);z-index:15
+}
+.actions-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center}
+.action-btn{
+  border-radius:20px;padding:15px 10px;font-size:16px;font-weight:900;border:2px solid #2b845f;background:#13221d;color:#22efb0;
+}
+.action-btn.truco{border-color:#916f33;background:#251c11;color:#ffd274}
+.action-btn.mazo{border-color:#3d3d3d;background:#1a1a1a;color:#ddd}
+.action-btn:disabled{opacity:.45}
+.action-btn.wide{grid-column:1 / span 2}
+.left-float-icons{
+  position:absolute;left:12px;bottom:112px;display:grid;gap:18px;z-index:18
+}
+.float-circle{
+  width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-size:28px;font-weight:900;border:none;box-shadow:var(--shadow)
+}
+.float-circle.yellow{background:#ffb300;color:#2a1700}
+.float-circle.green{background:#2df0aa;color:#0d2a1d}
+.status-line{text-align:center;color:#fff;padding:8px 12px;font-weight:700}
+.status-line b{color:#21efaf}
+.log{
+  background:rgba(0,0,0,.23);margin:10px 8px 0;border-radius:16px;padding:12px;font-size:13px;max-height:120px;overflow:auto;color:#efe5db
+}
+.log div{margin-bottom:6px}
+.log b{color:#25e7b3}
+.mute-btn{
+  position:fixed;right:12px;bottom:128px;z-index:19;border:none;background:#111b;border-radius:999px;color:#fff;padding:10px 12px;font-weight:800;box-shadow:var(--shadow)
+}
+.modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;place-items:center;z-index:30;padding:20px
+}
+.modal.active{display:grid}
+.modal-card{
+  width:min(92vw,420px);background:#13161c;border-radius:22px;padding:22px;box-shadow:var(--shadow);text-align:center
+}
+.modal-card h3{margin:0 0 8px;font-size:28px}
+.modal-card p{color:#d7d7d7;line-height:1.5}
+.modal-card .row{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.modal-card button{border:none;border-radius:999px;padding:12px 16px;font-weight:900}
+.modal-card .primary{background:#23e8b3;color:#10231d}
+.modal-card .secondary{background:#2a2f38;color:#fff}
+@media (max-width:620px){
+  .back-card{width:95px;height:138px}
+  .truco-card{width:112px;height:164px}
+  .panel-actions{padding-bottom:14px}
+  .action-btn{font-size:14px;padding:13px 8px}
+  .left-float-icons{bottom:100px}
+  .float-circle{width:54px;height:54px;font-size:22px}
+}
+</style>
 </head>
 <body>
-  <div class="app">
-    <header class="topbar">
-      <button class="brand" data-screen="home">
-        <span class="brand-icon"><span>♛</span><b>TP</b><small>AR</small></span>
-        <span>
-          <strong>Truco<span>Pro</span> <em>AR</em></strong>
-          <small>Truco argentino online</small>
-        </span>
-      </button>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">Truco<span class="pro">Pro</span> <span class="ar">AR</span></div>
+    <div class="top-actions">
+      <button class="mini-btn" onclick="newGame()">Nueva partida</button>
+      <button class="mini-btn" onclick="showHelp()">Ayuda</button>
+    </div>
+  </div>
 
-      <nav class="nav">
-        <button data-screen="home" class="active">Inicio</button>
-        <button data-screen="lobby">Mesas</button>
-        <button data-screen="game">Jugar CPU</button>
-        <button data-screen="ranking">Ranking</button>
-        <button data-screen="admin">Admin</button>
-      </nav>
-
-      <button class="primary-btn" id="quickPlayBtn">Jugar ahora</button>
-    </header>
-
-    <main>
-      <section id="home" class="screen active">
-        <div class="hero">
-          <div>
-            <span class="pill gold">⚡ MVP profesional · CPU + online-ready</span>
-            <h1>Truco argentino <span>premium</span> con mesa, cartas y motor real.</h1>
-            <p>
-              Proyecto completo base para TrucoPro AR: interfaz gamer argentina, juego contra computadora,
-              motor separado, sonido, lobby, ranking, panel admin demo, SQL y servidor preparado para multijugador.
-            </p>
-            <div class="hero-actions">
-              <button class="primary-btn big" id="heroPlayBtn">Jugar contra CPU</button>
-              <button class="ghost-btn big" data-screen="lobby">Ver mesas</button>
-            </div>
-          </div>
-
-          <div class="brand-preview">
-            <div class="preview-cards">
-              <div class="preview-card c1" id="previewCard1"></div>
-              <div class="preview-card c2" id="previewCard2"></div>
-              <div class="preview-card c3" id="previewCard3"></div>
-            </div>
-            <h2>Truco<span>Pro</span> <em>AR</em></h2>
-            <p>Mesas en vivo · Torneos · Ranking</p>
-          </div>
-        </div>
-      </section>
-
-      <section id="lobby" class="screen">
-        <div class="section-head">
-          <span class="pill">📡 Lobby</span>
-          <h2>Mesas disponibles</h2>
-          <p>Demo local con mesas listas. La estructura del servidor incluida permite llevar esto a online.</p>
-        </div>
-        <div class="lobby-grid" id="lobbyGrid"></div>
-      </section>
-
-      <section id="game" class="screen">
-        <div class="game-layout">
-          <aside class="side-panel">
-            <h3>Marcador</h3>
-            <div class="score-box">
-              <div><small>VOS</small><strong id="scorePlayer">0</strong></div>
-              <div><small>RIVAL</small><strong id="scoreCPU">0</strong></div>
-            </div>
-            <div class="info-card"><small>Mano</small><strong id="handOwner">Vos</strong></div>
-            <div class="info-card"><small>Estado</small><strong id="stateText">Nueva mano</strong></div>
-            <div class="info-card"><small>Envido</small><strong id="envidoText">0</strong></div>
-            <button class="primary-btn full" id="newHandBtn">Nueva mano</button>
-            <button class="danger-btn full" id="resetBtn">Reiniciar partida</button>
-          </aside>
-
-          <section class="table-shell">
-            <div class="wood-table">
-              <div class="opponent">
-                <div class="avatar">CPU</div>
-                <div class="name-tag">RivalPro ✔</div>
-                <div class="cpu-cards" id="cpuCards"></div>
-              </div>
-
-              <div class="hands-row">
-                <div class="hand-col">
-                  <h4>MANO 1</h4>
-                  <div class="play-slot" id="slot0"></div>
-                </div>
-                <div class="hand-col">
-                  <h4>MANO 2</h4>
-                  <div class="play-slot" id="slot1"></div>
-                </div>
-                <div class="hand-col">
-                  <h4>MANO 3</h4>
-                  <div class="play-slot" id="slot2"></div>
-                </div>
-              </div>
-
-              <div class="turn-badge" id="turnBadge">TU JUGADA · 29s</div>
-              <div class="player-cards" id="playerCards"></div>
-            </div>
-
-            <div class="action-panel">
-              <button class="truco-btn" id="trucoBtn">TRUCO</button>
-              <button id="envidoBtn">ENVIDO</button>
-              <button id="realEnvidoBtn">REAL ENVIDO</button>
-              <button id="faltaEnvidoBtn">FALTA ENVIDO</button>
-              <button class="dark-btn" id="mazoBtn">MAZO</button>
-            </div>
-          </section>
-
-          <aside class="side-panel">
-            <h3>Registro</h3>
-            <div class="log" id="log"></div>
-            <button class="ghost-btn full" id="soundBtn">🔊 Sonido</button>
-          </aside>
-        </div>
-      </section>
-
-      <section id="ranking" class="screen">
-        <div class="section-head">
-          <span class="pill gold">🏆 Temporada 01</span>
-          <h2>Ranking nacional</h2>
-        </div>
-        <div class="ranking-list" id="rankingList"></div>
-      </section>
-
-      <section id="admin" class="screen">
-        <div class="section-head">
-          <span class="pill">🔒 Panel admin demo</span>
-          <h2>Administración</h2>
-          <p>Vista preparada para usuarios, mesas, partidas, torneos, reportes y VIP.</p>
-        </div>
-        <div class="admin-grid">
-          <div><small>Usuarios</small><strong>1.284</strong></div>
-          <div><small>Mesas activas</small><strong>24</strong></div>
-          <div><small>Torneos hoy</small><strong>12</strong></div>
-          <div><small>Reportes</small><strong>3</strong></div>
-        </div>
-      </section>
-    </main>
-
-    <div class="modal" id="modal">
-      <div class="modal-card">
-        <h3 id="modalTitle">Partida terminada</h3>
-        <p id="modalText"></p>
-        <button class="primary-btn" id="modalPlayAgain">Jugar de nuevo</button>
-        <button class="ghost-btn" id="modalClose">Cerrar</button>
+  <div class="board">
+    <div class="opponent-header">
+      <div class="avatar-wrap">
+        <div class="place-badge">2°</div>
+        <div class="avatar" style="background-image:url('/mnt/data/ghostwriter_images/context/426bec30-9b02-588a-b33f-24ad530dc8b0.png'); background-position:center top;"></div>
+        <div class="user-tag">CPU_truco <span class="check">✔</span></div>
       </div>
     </div>
 
-    <div class="toast" id="toast"></div>
+    <div class="score-float">
+      <div class="score-panel">
+        <div class="side">
+          <div class="label">VOS</div>
+          <div class="bigscore"><span id="playerScoreText">0</span><div class="pips" id="playerPips"></div></div>
+        </div>
+        <div class="side">
+          <div class="label red">RIVAL</div>
+          <div class="bigscore"><span id="cpuScoreText">0</span><div class="pips" id="cpuPips"></div></div>
+        </div>
+        <div class="to-points">a<br><strong>15</strong></div>
+      </div>
+      <div style="text-align:center"><div class="turn-pill" id="turnPill">TU JUGADA <span class="timer" id="turnTimer">29s</span></div></div>
+    </div>
+
+    <div class="opponent-cards" id="cpuHand"></div>
+
+    <div class="manos">
+      <div class="mano-col">
+        <div class="mano-title">MANO 1</div>
+        <div class="slot" id="slot0"></div>
+      </div>
+      <div class="mano-col">
+        <div class="mano-title">MANO 2</div>
+        <div class="slot" id="slot1"></div>
+      </div>
+      <div class="mano-col">
+        <div class="mano-title">MANO 3</div>
+        <div class="slot" id="slot2"></div>
+      </div>
+    </div>
+
+    <div class="mano-banner" id="manoBanner">🤚 VOS • 1° (MANO)</div>
+    <div class="player-hand" id="playerHand"></div>
+    <div class="status-line" id="statusLine">Preparando partida…</div>
+    <div class="log" id="log"></div>
   </div>
 
-  <script src="./js/sounds.js"></script>
-  <script src="./js/card-renderer.js"></script>
-  <script src="./js/truco-engine.js"></script>
-  <script src="./js/app.js"></script>
+  <button class="mute-btn" id="muteBtn" onclick="toggleSound()">🔊 Sonido</button>
+
+  <div class="left-float-icons">
+    <button class="float-circle yellow" onclick="toggleLog()">📣</button>
+    <button class="float-circle green" onclick="toggleLog()">💬</button>
+  </div>
+
+  <div class="panel-actions">
+    <div class="actions-grid">
+      <button class="action-btn truco" id="btnTruco" onclick="callTruco()">TRUCO</button>
+      <button class="action-btn" id="btnEnvido" onclick="callEnvido('envido')">ENVIDO</button>
+      <button class="action-btn wide" id="btnRealEnvido" onclick="callEnvido('real')">REAL ENVIDO</button>
+      <button class="action-btn" id="btnFaltaEnvido" onclick="callEnvido('falta')">FALTA ENVIDO</button>
+      <button class="action-btn mazo" id="btnMazo" onclick="goMazo()">MAZO</button>
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-card">
+      <h3 id="modalTitle">Partida terminada</h3>
+      <p id="modalText"></p>
+      <div class="row">
+        <button class="primary" onclick="closeModal(); newGame();">Jugar de nuevo</button>
+        <button class="secondary" onclick="closeModal();">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUITS = {
+  espada: { color:"#248cd8", name:"espadas" },
+  basto: { color:"#3a9d48", name:"bastos" },
+  oro: { color:"#d29a18", name:"oros" },
+  copa: { color:"#c93636", name:"copas" }
+};
+const TRUCO_RANK = {
+  "1-espada":14,"1-basto":13,"7-espada":12,"7-oro":11,
+  "3-espada":10,"3-basto":10,"3-oro":10,"3-copa":10,
+  "2-espada":9,"2-basto":9,"2-oro":9,"2-copa":9,
+  "1-oro":8,"1-copa":8,
+  "12-espada":7,"12-basto":7,"12-oro":7,"12-copa":7,
+  "11-espada":6,"11-basto":6,"11-oro":6,"11-copa":6,
+  "10-espada":5,"10-basto":5,"10-oro":5,"10-copa":5,
+  "7-basto":4,"7-copa":4,
+  "6-espada":3,"6-basto":3,"6-oro":3,"6-copa":3,
+  "5-espada":2,"5-basto":2,"5-oro":2,"5-copa":2,
+  "4-espada":1,"4-basto":1,"4-oro":1,"4-copa":1
+};
+
+const state = {
+  gameTo: 15,
+  playerScore: 0,
+  cpuScore: 0,
+  handNumber: 0,
+  mano: "player",
+  turn: "player",
+  playerHand: [],
+  cpuHand: [],
+  table: [null, null, null], // {player, cpu, winner}
+  currentIndex: 0,
+  envidoUsed: false,
+  trucoLevel: 1, // 1 default, 2 truco
+  waiting: false,
+  sound: true,
+  timer: 29,
+  timerId: null,
+  turnLocked: false
+};
+
+function svgSuit(suit, size=48){
+  const color = SUITS[suit].color;
+  if(suit==="oro"){
+    return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="31" fill="#f3ce58" stroke="#b37f0e" stroke-width="6"/>
+      <circle cx="50" cy="50" r="18" fill="#ffe998" stroke="#b37f0e" stroke-width="4"/>
+    </svg>`;
+  }
+  if(suit==="espada"){
+    return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
+      <path d="M49 10 L60 44 L52 44 L52 74 L48 74 L48 44 L40 44 Z" fill="#28a8ff" stroke="#1768a8" stroke-width="3"/>
+      <rect x="42" y="72" width="16" height="7" rx="3" fill="#e6b73a" stroke="#956d16" stroke-width="3"/>
+      <path d="M34 79 Q50 92 66 79" fill="none" stroke="#956d16" stroke-width="5" stroke-linecap="round"/>
+    </svg>`;
+  }
+  if(suit==="basto"){
+    return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
+      <path d="M54 14 C70 22 77 37 70 55 C66 66 56 77 52 86 C48 79 37 66 33 55 C27 37 34 22 50 14 Z" fill="#59b162" stroke="#2d7b39" stroke-width="4"/>
+      <path d="M50 12 L53 87" stroke="#7a3f1c" stroke-width="6" stroke-linecap="round"/>
+      <path d="M42 36 C34 34 29 31 25 24" stroke="#7a3f1c" stroke-width="4" stroke-linecap="round"/>
+      <path d="M58 42 C66 40 71 37 76 30" stroke="#7a3f1c" stroke-width="4" stroke-linecap="round"/>
+    </svg>`;
+  }
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
+    <path d="M50 18 C58 31 75 33 75 53 C75 67 64 77 50 82 C36 77 25 67 25 53 C25 33 42 31 50 18 Z" fill="#f5d6a6" stroke="#b03b3b" stroke-width="5"/>
+    <path d="M38 57 Q50 64 62 57" fill="none" stroke="#b03b3b" stroke-width="5" stroke-linecap="round"/>
+    <path d="M50 82 L50 90" stroke="#b03b3b" stroke-width="5" stroke-linecap="round"/>
+  </svg>`;
+}
+
+function buildDeck(){
+  const nums = [1,2,3,4,5,6,7,10,11,12];
+  const suits = ["espada","basto","oro","copa"];
+  const deck = [];
+  suits.forEach(suit => nums.forEach(num => deck.push({
+    num,suit,id:`${num}-${suit}`,rank:TRUCO_RANK[`${num}-${suit}`],name:cardName(num,suit)
+  })));
+  return deck;
+}
+function cardName(num,suit){
+  const map = {
+    "1-espada":"Ancho de Espadas",
+    "1-basto":"Ancho de Bastos",
+    "7-espada":"Siete de Espadas",
+    "7-oro":"Siete de Oros"
+  };
+  return map[`${num}-${suit}`] || `${num} de ${SUITS[suit].name}`;
+}
+function shuffle(arr){
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function renderPips(card){
+  if(card.num===10 || card.num===11 || card.num===12){
+    const title = card.num===10?"SOTA":card.num===11?"CABALLO":"REY";
+    return `<div style="display:grid;justify-items:center;gap:6px">
+      <div style="font-size:13px;color:#444;font-weight:900">${title}</div>
+      <div>${svgSuit(card.suit,70)}</div>
+      <div style="font-size:11px;color:#777;font-weight:800">${SUITS[card.suit].name.toUpperCase()}</div>
+    </div>`;
+  }
+  const patterns = {
+    1:[{x:50,y:50}],
+    2:[{x:35,y:30},{x:65,y:70}],
+    3:[{x:35,y:26},{x:50,y:50},{x:65,y:74}],
+    4:[{x:35,y:28},{x:65,y:28},{x:35,y:72},{x:65,y:72}],
+    5:[{x:35,y:26},{x:65,y:26},{x:50,y:50},{x:35,y:74},{x:65,y:74}],
+    6:[{x:35,y:22},{x:65,y:22},{x:35,y:50},{x:65,y:50},{x:35,y:78},{x:65,y:78}],
+    7:[{x:35,y:18},{x:65,y:18},{x:35,y:42},{x:50,y:54},{x:65,y:42},{x:35,y:82},{x:65,y:82}]
+  }[card.num];
+  const icons = patterns.map(p=>`<div style="position:absolute;left:${p.x}%;top:${p.y}%;transform:translate(-50%,-50%)">${svgSuit(card.suit,34)}</div>`).join('');
+  return `<div style="position:relative;width:100%;height:100%">${icons}</div>`;
+}
+function renderCard(card, clickable=true){
+  const icon = svgSuit(card.suit, 16);
+  return `<div class="truco-card">
+    <div class="card-inner"></div>
+    <div class="corner">${card.num}<div class="suit-icon-small">${icon}</div></div>
+    <div class="corner br">${card.num}<div class="suit-icon-small">${icon}</div></div>
+    <div class="center-art">${renderPips(card)}</div>
+    <div class="card-name-bottom">${card.name}</div>
+  </div>`;
+}
+function renderPlayerHand(){
+  const wrap = document.getElementById("playerHand");
+  wrap.innerHTML = "";
+  state.playerHand.forEach((card, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "card-btn " + ((state.turn==="player" && !state.waiting && !state.turnLocked) ? "playable" : "disabled");
+    btn.innerHTML = renderCard(card, true);
+    btn.onclick = () => playPlayerCard(idx);
+    wrap.appendChild(btn);
+  });
+}
+function renderCPUHand(){
+  const wrap = document.getElementById("cpuHand");
+  wrap.innerHTML = "";
+  state.cpuHand.forEach((_, idx)=>{
+    const div = document.createElement("div");
+    div.className = "back-card" + (idx===0?" left": idx===2?" right":"");
+    wrap.appendChild(div);
+  });
+}
+function renderTableSlots(){
+  for(let i=0;i<3;i++){
+    const slot = document.getElementById(`slot${i}`);
+    slot.className = "slot";
+    slot.innerHTML = "";
+    const entry = state.table[i];
+    if(!entry) continue;
+    if(entry.winner==="player") slot.classList.add("win-player");
+    if(entry.winner==="cpu") slot.classList.add("win-cpu");
+    if(entry.cpu){
+      const c = document.createElement("div");
+      c.className = "mini-card-wrap cpu";
+      c.innerHTML = renderCard(entry.cpu, false);
+      slot.appendChild(c);
+    }
+    if(entry.player){
+      const c = document.createElement("div");
+      c.className = "mini-card-wrap player";
+      c.innerHTML = renderCard(entry.player, false);
+      slot.appendChild(c);
+    }
+  }
+}
+function updateScoreboard(){
+  document.getElementById("playerScoreText").textContent = state.playerScore;
+  document.getElementById("cpuScoreText").textContent = state.cpuScore;
+  renderPipRow("playerPips", state.playerScore);
+  renderPipRow("cpuPips", state.cpuScore);
+}
+function renderPipRow(id, score){
+  const wrap = document.getElementById(id);
+  wrap.innerHTML = "";
+  for(let i=0;i<3;i++){
+    const span = document.createElement("span");
+    span.className = "pip" + (score > i ? " on" : "");
+    wrap.appendChild(span);
+  }
+}
+function setStatus(text){
+  document.getElementById("statusLine").innerHTML = text;
+}
+function log(msg, who="Sistema"){
+  const box = document.getElementById("log");
+  const line = document.createElement("div");
+  line.innerHTML = `<b>${who}:</b> ${msg}`;
+  box.prepend(line);
+}
+function toggleLog(){
+  const box = document.getElementById("log");
+  box.style.display = box.style.display === "none" ? "block" : "none";
+}
+function newGame(){
+  state.playerScore = 0;
+  state.cpuScore = 0;
+  state.handNumber = 0;
+  updateScoreboard();
+  startHand();
+  log("Nueva partida iniciada.");
+}
+function startHand(){
+  clearTimer();
+  const deck = shuffle(buildDeck());
+  state.playerHand = deck.slice(0,3);
+  state.cpuHand = deck.slice(3,6);
+  state.table = [null,null,null];
+  state.currentIndex = 0;
+  state.envidoUsed = false;
+  state.trucoLevel = 1;
+  state.waiting = false;
+  state.turnLocked = false;
+  state.handNumber++;
+  state.mano = state.handNumber % 2 ? "player" : "cpu";
+  state.turn = state.mano;
+  document.getElementById("manoBanner").innerHTML = `${state.mano==="player"?"🤚 VOS":"🤖 CPU"} • 1° (MANO)`;
+  setStatus(`Partida a <b>${state.gameTo}</b> puntos. Mano ${state.handNumber}.`);
+  renderCPUHand();
+  renderPlayerHand();
+  renderTableSlots();
+  updateButtons();
+  updateTurnUI();
+  playSound("deal");
+  if(state.turn==="cpu"){
+    setTimeout(cpuPlay, 900);
+  } else {
+    beginTurnTimer();
+  }
+}
+function updateButtons(){
+  const disabledEnvido = state.envidoUsed || state.currentIndex > 0 || state.turn !== "player" || state.waiting;
+  document.getElementById("btnEnvido").disabled = disabledEnvido;
+  document.getElementById("btnRealEnvido").disabled = disabledEnvido;
+  document.getElementById("btnFaltaEnvido").disabled = disabledEnvido;
+  document.getElementById("btnTruco").disabled = state.turn !== "player" || state.waiting || state.trucoLevel > 1;
+  document.getElementById("btnMazo").disabled = state.waiting;
+}
+function updateTurnUI(){
+  document.getElementById("turnPill").innerHTML = (state.turn==="player" ? `TU JUGADA <span class="timer" id="turnTimer">${state.timer}s</span>` : `JUEGA RIVAL <span class="timer" id="turnTimer">...</span>`);
+}
+function beginTurnTimer(){
+  clearTimer();
+  state.timer = 29;
+  updateTurnUI();
+  state.timerId = setInterval(()=>{
+    state.timer--;
+    const el = document.getElementById("turnTimer");
+    if(el) el.textContent = `${state.timer}s`;
+    if(state.timer <= 0){
+      clearTimer();
+      autoPlayFirstCard();
+    }
+  }, 1000);
+}
+function clearTimer(){
+  if(state.timerId){
+    clearInterval(state.timerId);
+    state.timerId = null;
+  }
+}
+function autoPlayFirstCard(){
+  if(state.turn==="player" && state.playerHand.length){
+    log("Se agotó el tiempo. Se jugó la primera carta automáticamente.");
+    playPlayerCard(0);
+  }
+}
+function playPlayerCard(index){
+  if(state.turn!=="player" || state.waiting || state.turnLocked) return;
+  clearTimer();
+  const card = state.playerHand.splice(index,1)[0];
+  if(!state.table[state.currentIndex]) state.table[state.currentIndex] = {};
+  state.table[state.currentIndex].player = card;
+  renderPlayerHand();
+  renderTableSlots();
+  log(`Jugaste <b>${card.name}</b>.`, "Vos");
+  playSound("card");
+  state.turn = "cpu";
+  updateTurnUI();
+  if(state.table[state.currentIndex].cpu){
+    resolveTrick();
+  } else {
+    setTimeout(cpuPlay, 850);
+  }
+}
+function cpuPlay(){
+  clearTimer();
+  if(state.turn!=="cpu") return;
+  const idx = chooseCPUCard();
+  const card = state.cpuHand.splice(idx,1)[0];
+  if(!state.table[state.currentIndex]) state.table[state.currentIndex] = {};
+  state.table[state.currentIndex].cpu = card;
+  renderCPUHand();
+  renderTableSlots();
+  log(`El rival jugó <b>${card.name}</b>.`, "CPU");
+  playSound("card");
+  state.turn = "player";
+  updateTurnUI();
+  if(state.table[state.currentIndex].player){
+    setTimeout(resolveTrick, 600);
+  } else {
+    beginTurnTimer();
+  }
+}
+function chooseCPUCard(){
+  const current = state.table[state.currentIndex];
+  const hand = state.cpuHand.map((card, i) => ({card, i}));
+  if(current && current.player){
+    const winning = hand.filter(h => h.card.rank > current.player.rank).sort((a,b)=>a.card.rank - b.card.rank);
+    if(winning.length) return winning[0].i;
+    return hand.sort((a,b)=>a.card.rank - b.card.rank)[0].i;
+  }
+  return hand.sort((a,b)=>a.card.rank - b.card.rank)[0].i;
+}
+function resolveTrick(){
+  const trick = state.table[state.currentIndex];
+  if(!trick || !trick.player || !trick.cpu) return;
+  let winner = "parda";
+  if(trick.player.rank > trick.cpu.rank) winner = "player";
+  else if(trick.cpu.rank > trick.player.rank) winner = "cpu";
+  trick.winner = winner;
+  renderTableSlots();
+  playSound(winner==="player"?"win":winner==="cpu"?"lose":"click");
+  if(winner==="player") log(`Ganaste la mano ${state.currentIndex+1}.`);
+  else if(winner==="cpu") log(`El rival ganó la mano ${state.currentIndex+1}.`);
+  else log(`La mano ${state.currentIndex+1} quedó parda.`);
+  const resolved = getHandWinner();
+  if(resolved){
+    awardHand(resolved);
+    return;
+  }
+  state.currentIndex++;
+  state.turn = winner==="parda" ? state.mano : winner;
+  updateButtons();
+  if(state.turn==="cpu") setTimeout(cpuPlay, 900);
+  else beginTurnTimer();
+  updateTurnUI();
+}
+function getHandWinner(){
+  const results = state.table.filter(Boolean).map(t=>t.winner);
+  const playerWins = results.filter(x=>x==="player").length;
+  const cpuWins = results.filter(x=>x==="cpu").length;
+  if(playerWins>=2) return "player";
+  if(cpuWins>=2) return "cpu";
+  if(results.length===2){
+    if(results[0]==="parda" && results[1]==="player") return "player";
+    if(results[0]==="parda" && results[1]==="cpu") return "cpu";
+    if(results[0]==="player" && results[1]==="parda") return "player";
+    if(results[0]==="cpu" && results[1]==="parda") return "cpu";
+  }
+  if(results.length===3){
+    if(playerWins>cpuWins) return "player";
+    if(cpuWins>playerWins) return "cpu";
+    return state.mano;
+  }
+  return null;
+}
+function awardHand(winner){
+  clearTimer();
+  const points = state.trucoLevel;
+  if(winner==="player") state.playerScore += points;
+  else state.cpuScore += points;
+  updateScoreboard();
+  setStatus((winner==="player" ? `<b>Ganaste</b>` : `<b>Ganó el rival</b>`) + ` y sumó ${points} punto${points>1?"s":""}.`);
+  log(`${winner==="player"?"Vos":"CPU"} ganó la mano y sumó ${points} punto${points>1?"s":""}.`);
+  if(state.playerScore >= state.gameTo || state.cpuScore >= state.gameTo){
+    endGame(winner==="player");
+  } else {
+    setTimeout(startHand, 1700);
+  }
+}
+function calcEnvido(hand){
+  const bySuit = {};
+  hand.forEach(card => {
+    const val = card.num >= 10 ? 0 : card.num;
+    if(!bySuit[card.suit]) bySuit[card.suit]=[];
+    bySuit[card.suit].push(val);
+  });
+  let best = 0;
+  Object.values(bySuit).forEach(vals => {
+    vals.sort((a,b)=>b-a);
+    if(vals.length>=2) best = Math.max(best, 20 + vals[0] + vals[1]);
+    else best = Math.max(best, vals[0]);
+  });
+  return best;
+}
+function callEnvido(type){
+  if(state.envidoUsed || state.currentIndex>0 || state.turn!=="player" || state.waiting) return;
+  state.envidoUsed = true;
+  state.waiting = true;
+  clearTimer();
+  updateButtons();
+  const yours = calcEnvido(state.playerHand);
+  const cpu = calcEnvido(state.cpuHand);
+  let callText = "ENVIDO";
+  let wantThreshold = 23;
+  let winPoints = 2;
+  if(type==="real"){ callText = "REAL ENVIDO"; wantThreshold = 26; winPoints = 3; }
+  if(type==="falta"){ callText = "FALTA ENVIDO"; wantThreshold = 28; winPoints = Math.max(1, state.gameTo - Math.max(state.playerScore, state.cpuScore)); }
+  log(`Cantaste <b>${callText}</b>.`, "Vos");
+  playSound("call");
+  setStatus(`Cantaste <b>${callText}</b>. Esperando respuesta…`);
+  setTimeout(()=>{
+    const cpuAccepts = cpu >= wantThreshold || Math.random() > 0.45;
+    if(cpuAccepts){
+      log(`CPU dijo <b>quiero</b>. Tu envido: ${yours}. Envido rival: ${cpu}.`, "CPU");
+      if(yours >= cpu){
+        state.playerScore += winPoints;
+        log(`Ganaste el ${callText.toLowerCase()} y sumaste ${winPoints}.`);
+        setStatus(`Ganaste el <b>${callText.toLowerCase()}</b> y sumaste ${winPoints}.`);
+        playSound("win");
+      } else {
+        state.cpuScore += winPoints;
+        log(`El rival ganó el ${callText.toLowerCase()} y sumó ${winPoints}.`);
+        setStatus(`El rival ganó el <b>${callText.toLowerCase()}</b> y sumó ${winPoints}.`);
+        playSound("lose");
+      }
+    } else {
+      const noWant = type==="envido" ? 1 : 1;
+      state.playerScore += noWant;
+      log(`CPU dijo <b>no quiero</b>. Sumaste ${noWant}.`, "CPU");
+      setStatus(`El rival no quiso. Sumaste <b>${noWant}</b>.`);
+      playSound("win");
+    }
+    state.waiting = false;
+    updateScoreboard();
+    updateButtons();
+    if(state.playerScore >= state.gameTo || state.cpuScore >= state.gameTo){
+      endGame(state.playerScore >= state.gameTo);
+      return;
+    }
+    if(state.turn==="player") beginTurnTimer();
+  }, 1100);
+}
+function callTruco(){
+  if(state.turn!=="player" || state.waiting || state.trucoLevel > 1) return;
+  state.waiting = true;
+  clearTimer();
+  playSound("call");
+  log(`Cantaste <b>TRUCO</b>.`, "Vos");
+  setStatus(`Cantaste <b>TRUCO</b>. Esperando respuesta…`);
+  updateButtons();
+  setTimeout(()=>{
+    const power = state.cpuHand.reduce((s,c)=>s+c.rank,0);
+    const accept = power > 16 || Math.random() > 0.42;
+    if(accept){
+      state.trucoLevel = 2;
+      log(`CPU dijo <b>quiero</b>.`, "CPU");
+      setStatus(`El rival aceptó el <b>TRUCO</b>. La mano vale <b>2</b>.`);
+      playSound("click");
+    } else {
+      state.playerScore += 1;
+      updateScoreboard();
+      log(`CPU dijo <b>no quiero</b>. Sumaste 1.`, "CPU");
+      setStatus(`El rival no quiso el truco. Sumaste <b>1</b>.`);
+      playSound("win");
+      state.waiting = false;
+      if(state.playerScore >= state.gameTo) endGame(true);
+      else setTimeout(startHand, 1400);
+      return;
+    }
+    state.waiting = false;
+    updateButtons();
+    if(state.turn==="player") beginTurnTimer();
+  }, 1000);
+}
+function goMazo(){
+  if(state.waiting) return;
+  clearTimer();
+  state.cpuScore += state.trucoLevel;
+  updateScoreboard();
+  log(`Te fuiste al mazo. El rival sumó ${state.trucoLevel}.`);
+  setStatus(`Te fuiste al <b>mazo</b>. El rival sumó ${state.trucoLevel}.`);
+  playSound("lose");
+  if(state.cpuScore >= state.gameTo) endGame(false);
+  else setTimeout(startHand, 1400);
+}
+function endGame(playerWon){
+  clearTimer();
+  document.getElementById("modalTitle").textContent = playerWon ? "¡Ganaste la partida!" : "Perdiste la partida";
+  document.getElementById("modalText").textContent = `Resultado final: Vos ${state.playerScore} - Rival ${state.cpuScore}.`;
+  document.getElementById("modal").classList.add("active");
+}
+function closeModal(){ document.getElementById("modal").classList.remove("active"); }
+function showHelp(){
+  document.getElementById("modalTitle").textContent = "Demo funcional";
+  document.getElementById("modalText").textContent = "Ya podés jugar contra la CPU: tocar cartas, truco, envido, real envido, falta envido y mazo. Las cartas quedan en la mesa por mano. Esto es una demo seria offline; para online real y 100% producción hace falta backend.";
+  document.getElementById("modal").classList.add("active");
+}
+function playSound(type){
+  if(!state.sound) return;
+  try{
+    const ctx = playSound.ctx || (playSound.ctx = new (window.AudioContext||window.webkitAudioContext)());
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    const map = {deal:360, card:430, win:760, lose:160, call:230, click:520};
+    osc.frequency.setValueAtTime(map[type]||400, now);
+    if(type==="win") osc.frequency.exponentialRampToValueAtTime(980, now+.12);
+    if(type==="lose") osc.frequency.exponentialRampToValueAtTime(80, now+.22);
+    gain.gain.setValueAtTime(.0001, now);
+    gain.gain.exponentialRampToValueAtTime(.16, now+.02);
+    gain.gain.exponentialRampToValueAtTime(.0001, now + (type==="lose" ? .28 : .16));
+    osc.type = type==="call" ? "sawtooth" : "triangle";
+    osc.start(now); osc.stop(now + (type==="lose" ? .3 : .18));
+  } catch(e){}
+}
+function toggleSound(){
+  state.sound = !state.sound;
+  document.getElementById("muteBtn").textContent = state.sound ? "🔊 Sonido" : "🔇 Silencio";
+  if(state.sound) playSound("click");
+}
+updateScoreboard();
+newGame();
+</script>
 </body>
 </html>
