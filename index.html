@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TrucoPro AR · Plataforma de Truco Argentino</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <button class="brand" data-screen="home">
+        <span class="brand-icon"><span>♛</span><b>TP</b><small>AR</small></span>
+        <span>
+          <strong>Truco<span>Pro</span> <em>AR</em></strong>
+          <small>Truco argentino online</small>
+        </span>
+      </button>
+
+      <nav class="nav">
+        <button data-screen="home" class="active">Inicio</button>
+        <button data-screen="lobby">Mesas</button>
+        <button data-screen="game">Jugar CPU</button>
+        <button data-screen="ranking">Ranking</button>
+        <button data-screen="admin">Admin</button>
+      </nav>
+
+      <button class="primary-btn" id="quickPlayBtn">Jugar ahora</button>
+    </header>
+
+    <main>
+      <section id="home" class="screen active">
+        <div class="hero">
+          <div>
+            <span class="pill gold">⚡ MVP profesional · CPU + online-ready</span>
+            <h1>Truco argentino <span>premium</span> con mesa, cartas y motor real.</h1>
+            <p>
+              Proyecto completo base para TrucoPro AR: interfaz gamer argentina, juego contra computadora,
+              motor separado, sonido, lobby, ranking, panel admin demo, SQL y servidor preparado para multijugador.
+            </p>
+            <div class="hero-actions">
+              <button class="primary-btn big" id="heroPlayBtn">Jugar contra CPU</button>
+              <button class="ghost-btn big" data-screen="lobby">Ver mesas</button>
+            </div>
+          </div>
+
+          <div class="brand-preview">
+            <div class="preview-cards">
+              <div class="preview-card c1" id="previewCard1"></div>
+              <div class="preview-card c2" id="previewCard2"></div>
+              <div class="preview-card c3" id="previewCard3"></div>
+            </div>
+            <h2>Truco<span>Pro</span> <em>AR</em></h2>
+            <p>Mesas en vivo · Torneos · Ranking</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="lobby" class="screen">
+        <div class="section-head">
+          <span class="pill">📡 Lobby</span>
+          <h2>Mesas disponibles</h2>
+          <p>Demo local con mesas listas. La estructura del servidor incluida permite llevar esto a online.</p>
+        </div>
+        <div class="lobby-grid" id="lobbyGrid"></div>
+      </section>
+
+      <section id="game" class="screen">
+        <div class="game-layout">
+          <aside class="side-panel">
+            <h3>Marcador</h3>
+            <div class="score-box">
+              <div><small>VOS</small><strong id="scorePlayer">0</strong></div>
+              <div><small>RIVAL</small><strong id="scoreCPU">0</strong></div>
+            </div>
+            <div class="info-card"><small>Mano</small><strong id="handOwner">Vos</strong></div>
+            <div class="info-card"><small>Estado</small><strong id="stateText">Nueva mano</strong></div>
+            <div class="info-card"><small>Envido</small><strong id="envidoText">0</strong></div>
+            <button class="primary-btn full" id="newHandBtn">Nueva mano</button>
+            <button class="danger-btn full" id="resetBtn">Reiniciar partida</button>
+          </aside>
+
+          <section class="table-shell">
+            <div class="wood-table">
+              <div class="opponent">
+                <div class="avatar">CPU</div>
+                <div class="name-tag">RivalPro ✔</div>
+                <div class="cpu-cards" id="cpuCards"></div>
+              </div>
+
+              <div class="hands-row">
+                <div class="hand-col">
+                  <h4>MANO 1</h4>
+                  <div class="play-slot" id="slot0"></div>
+                </div>
+                <div class="hand-col">
+                  <h4>MANO 2</h4>
+                  <div class="play-slot" id="slot1"></div>
+                </div>
+                <div class="hand-col">
+                  <h4>MANO 3</h4>
+                  <div class="play-slot" id="slot2"></div>
+                </div>
+              </div>
+
+              <div class="turn-badge" id="turnBadge">TU JUGADA · 29s</div>
+              <div class="player-cards" id="playerCards"></div>
+            </div>
+
+            <div class="action-panel">
+              <button class="truco-btn" id="trucoBtn">TRUCO</button>
+              <button id="envidoBtn">ENVIDO</button>
+              <button id="realEnvidoBtn">REAL ENVIDO</button>
+              <button id="faltaEnvidoBtn">FALTA ENVIDO</button>
+              <button class="dark-btn" id="mazoBtn">MAZO</button>
+            </div>
+          </section>
+
+          <aside class="side-panel">
+            <h3>Registro</h3>
+            <div class="log" id="log"></div>
+            <button class="ghost-btn full" id="soundBtn">🔊 Sonido</button>
+          </aside>
+        </div>
+      </section>
+
+      <section id="ranking" class="screen">
+        <div class="section-head">
+          <span class="pill gold">🏆 Temporada 01</span>
+          <h2>Ranking nacional</h2>
+        </div>
+        <div class="ranking-list" id="rankingList"></div>
+      </section>
+
+      <section id="admin" class="screen">
+        <div class="section-head">
+          <span class="pill">🔒 Panel admin demo</span>
+          <h2>Administración</h2>
+          <p>Vista preparada para usuarios, mesas, partidas, torneos, reportes y VIP.</p>
+        </div>
+        <div class="admin-grid">
+          <div><small>Usuarios</small><strong>1.284</strong></div>
+          <div><small>Mesas activas</small><strong>24</strong></div>
+          <div><small>Torneos hoy</small><strong>12</strong></div>
+          <div><small>Reportes</small><strong>3</strong></div>
+        </div>
+      </section>
+    </main>
+
+    <div class="modal" id="modal">
+      <div class="modal-card">
+        <h3 id="modalTitle">Partida terminada</h3>
+        <p id="modalText"></p>
+        <button class="primary-btn" id="modalPlayAgain">Jugar de nuevo</button>
+        <button class="ghost-btn" id="modalClose">Cerrar</button>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script src="./js/sounds.js"></script>
+  <script src="./js/card-renderer.js"></script>
+  <script src="./js/truco-engine.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>

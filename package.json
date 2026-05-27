@@ -1,0 +1,14 @@
+{
+  "name": "trucopro-ar",
+  "version": "1.0.0",
+  "description": "Plataforma base de truco argentino online TrucoPro AR",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.3",
+    "socket.io": "^4.7.5"
+  }
+}
